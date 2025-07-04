@@ -1,0 +1,206 @@
+{
+  "metadata": {
+    "title": "项目开发计划文档",
+    "author": "开发团队",
+    "subject": "技术文档",
+    "keywords": ["开发", "计划", "技术"],
+    "createdAt": "2024-01-15",
+    "updatedAt": "2024-01-15",
+    "version": "1.0.0"
+  },
+  "style": {
+    "fontFamily": "'Microsoft YaHei', Arial, sans-serif",
+    "fontSize": "16px",
+    "lineHeight": "1.6",
+    "color": "#333",
+    "backgroundColor": "#fff",
+    "pageSize": "A4",
+    "orientation": "portrait"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "content": "项目概述",
+      "style": {
+        "color": "#2c3e50",
+        "textAlign": "center"
+      }
+    },
+    {
+      "type": "paragraph",
+      "content": "这是一个将结构化JSON数据转换为多种格式的工具项目。我们的目标是创建一个灵活、可扩展的文档生成系统，支持PDF、DOCX、HTML等多种输出格式。",
+      "style": {
+        "textAlign": "justify",
+        "lineHeight": "1.8"
+      }
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "项目目标",
+      "style": {
+        "color": "#34495e",
+        "marginTop": "30px"
+      }
+    },
+    {
+      "type": "list",
+      "listType": "unordered",
+      "items": [
+        "支持多种输出格式（PDF、DOCX、HTML、Vue组件、React组件）",
+        "提供灵活的JSON数据结构",
+        "支持自定义样式和模板",
+        "易于集成和扩展",
+        "提供完整的API文档"
+      ],
+      "style": {
+        "marginLeft": "20px"
+      }
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "技术栈",
+      "style": {
+        "color": "#34495e",
+        "marginTop": "30px"
+      }
+    },
+    {
+      "type": "table",
+      "headers": ["技术", "版本", "用途"],
+      "rows": [
+        ["Node.js", "18+", "运行时环境"],
+        ["TypeScript", "5.0+", "开发语言"],
+        ["Puppeteer", "21.0+", "PDF生成"],
+        ["docx.js", "8.0+", "DOCX生成"],
+        ["Vue", "3.0+", "Vue组件生成"],
+        ["React", "18.0+", "React组件生成"]
+      ],
+      "style": {
+        "borderWidth": "1px",
+        "borderColor": "#ddd",
+        "headerBackground": "#f8f9fa"
+      }
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "开发阶段",
+      "style": {
+        "color": "#34495e",
+        "marginTop": "30px"
+      }
+    },
+    {
+      "type": "container",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "heading",
+          "level": 3,
+          "content": "第一阶段：基础架构",
+          "style": {
+            "color": "#e74c3c"
+          }
+        },
+        {
+          "type": "paragraph",
+          "content": "搭建项目基础架构，定义数据结构，创建核心转换引擎。"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": "第二阶段：格式支持",
+          "style": {
+            "color": "#e67e22"
+          }
+        },
+        {
+          "type": "paragraph",
+          "content": "实现HTML、PDF、DOCX等格式的生成器。"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": "第三阶段：组件生成",
+          "style": {
+            "color": "#f39c12"
+          }
+        },
+        {
+          "type": "paragraph",
+          "content": "开发Vue和React组件生成器。"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "content": "第四阶段：工具完善",
+          "style": {
+            "color": "#27ae60"
+          }
+        },
+        {
+          "type": "paragraph",
+          "content": "开发CLI工具，完善测试和文档。"
+        }
+      ],
+      "style": {
+        "padding": "20px",
+        "backgroundColor": "#f8f9fa",
+        "borderRadius": "8px"
+      }
+    },
+    {
+      "type": "divider",
+      "style": "dashed",
+      "color": "#bdc3c7",
+      "width": "100%"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "项目时间线",
+      "style": {
+        "color": "#34495e",
+        "marginTop": "30px"
+      }
+    },
+    {
+      "type": "list",
+      "listType": "ordered",
+      "items": [
+        "第1周：项目初始化和基础架构搭建",
+        "第2-3周：HTML生成器开发",
+        "第4-5周：PDF生成器开发",
+        "第6-7周：DOCX生成器开发",
+        "第8-9周：Vue组件生成器开发",
+        "第10-11周：React组件生成器开发",
+        "第12周：CLI工具开发",
+        "第13周：测试和文档完善"
+      ],
+      "style": {
+        "marginLeft": "20px"
+      }
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "总结",
+      "style": {
+        "color": "#34495e",
+        "marginTop": "30px"
+      }
+    },
+    {
+      "type": "paragraph",
+      "content": "通过这个项目，我们将创建一个强大的文档生成工具，能够满足各种文档转换需求。项目采用模块化设计，易于维护和扩展。",
+      "style": {
+        "textAlign": "justify",
+        "lineHeight": "1.8",
+        "fontStyle": "italic"
+      }
+    }
+  ]
+}
