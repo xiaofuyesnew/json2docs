@@ -1,0 +1,15 @@
+{
+  "name": "@json2docs-examples/basic",
+  "version": "1.0.0",
+  "description": "JSON2Docs 基础示例",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "@json2docs/core": "workspace:*"
+  }
+}

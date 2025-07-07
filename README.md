@@ -1,151 +1,303 @@
 # JSON2Docs - 结构化数据转换库
 
-一个强大的npm库，用于将结构化JSON数据转换为多种格式（PDF、DOCX、HTML DOM），并提供Vue和React组件封装，让您可以在前端应用中直接渲染JSON数据。
+一个强大的 JavaScript 库，用于将结构化 JSON 配置数据转换为多种格式（PDF、DOCX、HTML DOM），支持与 pdfmake 兼容的文档配置格式。
 
-## 项目概述
+## 核心设计理念
 
-JSON2Docs 是一个强大的文档转换库，它提供：
+JSON2Docs 的核心是一个接收 JSON 配置数据的函数，配置包含两个主要部分：
 
-### 核心功能
+1. **文档内容配置** - 与 pdfmake 配置格式保持一致
+2. **转换目标配置** - 指定输出格式（PDF、DOCX、HTML）
 
-- **JSON转换引擎** - 将结构化JSON转换为多种格式
-- **PDF生成** - 生成PDF文档
-- **DOCX生成** - 生成Word文档
-- **HTML生成** - 生成HTML DOM
+### 转换流程
 
-### 前端组件
+- **PDF 输出**：文档配置直接交给 pdfmake 处理
+- **DOCX 输出**：文档配置经过转换后交给 docx 库处理
+- **HTML 输出**：生成 HTML DOM 字符串，样式用 `<style>` 标签包裹，不包含 `<html>`、`<body>`、`<head>` 等标签，专注于文档结构，可直接用于 `v-html` 指令
 
-- **Vue组件** - 在Vue应用中直接渲染JSON数据
-- **React组件** - 在React应用中直接渲染JSON数据
+## 安装
 
-## 开发计划
+```bash
+npm install @json2docs/core
+```
 
-### 阶段1：项目基础架构 ✅
+## 基本用法
 
-- [x] 项目初始化
-- [x] 设置项目结构
-- [x] 配置开发环境
-- [x] 创建基础配置文件
-- [x] 定义JSON Schema设计
-- [x] 设计文档模板格式
-- [x] 创建示例数据
-- [x] 创建核心生成器基类
-- [x] 实现HTML DOM生成器
+```javascript
+import { Json2Docs } from '@json2docs/core';
 
-### 阶段2：核心转换引擎 🔄
+const json2docs = new Json2Docs();
 
-- [x] HTML DOM生成器
-  - [x] 实现JSON到HTML的转换
-  - [x] 支持样式和布局
-  - [x] 创建可配置的模板系统
-- [ ] PDF生成器
-  - [ ] 集成PDF生成库（如Puppeteer或jsPDF）
-  - [ ] 实现HTML到PDF的转换
-  - [ ] 支持页面布局和样式
-- [ ] DOCX生成器
-  - [ ] 集成DOCX生成库（如docx.js）
-  - [ ] 实现JSON到DOCX的转换
-  - [ ] 支持文档格式和样式
+// 配置数据
+const config = {
+  // 文档内容配置（pdfmake 格式）
+  content: [
+    { text: '文档标题', style: 'header' },
+    { text: '这是正文内容...', margin: [0, 10, 0, 0] },
+    {
+      table: {
+        body: [
+          ['列1', '列2', '列3'],
+          ['数据1', '数据2', '数据3']
+        ]
+      }
+    }
+  ],
 
-### 阶段3：前端组件生成 📋
+  // 样式定义
+  styles: {
+    header: {
+      fontSize: 18,
+      bold: true,
+      color: '#2c3e50'
+    }
+  },
 
-- [ ] Vue SFC生成器
-  - [ ] 生成Vue单文件组件
-  - [ ] 支持响应式数据绑定
-  - [ ] 实现组件样式和交互
-- [ ] React组件生成器
-  - [ ] 生成React函数组件
-  - [ ] 支持Hooks和状态管理
-  - [ ] 实现组件样式和交互
+  // 转换目标配置
+  output: {
+    format: 'html', // 'pdf' | 'docx' | 'html'
+    options: {
+      // 格式特定选项
+    }
+  }
+};
 
-### 阶段4：工具和优化 📋
+// 生成文档
+const result = await json2docs.generate(config);
+console.log(result.content); // HTML DOM 字符串或文件路径
+```
 
-- [ ] CLI工具开发
-  - [ ] 创建命令行接口
-  - [ ] 支持批量转换
-  - [ ] 添加配置选项
-- [ ] 测试和文档
-  - [ ] 编写单元测试
-  - [ ] 创建API文档
-  - [ ] 添加使用示例
+## 支持的输出格式
 
-## 当前任务
+### 1. PDF 输出
 
-### 已完成 ✅
+```javascript
+const config = {
+  content: [
+    { text: 'PDF 文档', style: 'title' },
+    { text: '使用 pdfmake 生成' }
+  ],
+  styles: {
+    title: { fontSize: 20, bold: true }
+  },
+  output: {
+    format: 'pdf',
+    options: {
+      filename: 'document.pdf'
+    }
+  }
+};
 
-- 项目基础架构搭建
-- HTML DOM生成器开发
-- 示例文档生成测试
+const result = await json2docs.generate(config);
+// result.outputPath 包含生成的 PDF 文件路径
+```
 
-### 下一步
+### 2. DOCX 输出
 
-- PDF生成器开发
+```javascript
+const config = {
+  content: [
+    { text: 'Word 文档', style: 'title' },
+    { text: '使用 docx 库生成' }
+  ],
+  styles: {
+    title: { fontSize: 20, bold: true }
+  },
+  output: {
+    format: 'docx',
+    options: {
+      filename: 'document.docx'
+    }
+  }
+};
 
-## 技术栈
+const result = await json2docs.generate(config);
+// result.outputPath 包含生成的 DOCX 文件路径
+```
 
-- **Node.js** - 运行时环境
-- **TypeScript** - 开发语言
-- **Puppeteer/jsPDF** - PDF生成
-- **docx.js** - DOCX生成
-- **Vue 3** - Vue组件生成
-- **React 18** - React组件生成
+### 3. HTML DOM 输出
+
+```javascript
+const config = {
+  content: [
+    { text: 'HTML 文档', style: 'title' },
+    { text: '可直接用于 v-html' }
+  ],
+  styles: {
+    title: { fontSize: '20px', fontWeight: 'bold', color: '#2c3e50' }
+  },
+  output: {
+    format: 'html'
+  }
+};
+
+const result = await json2docs.generate(config);
+// result.content 包含 HTML DOM 字符串，可直接用于 v-html
+```
+
+## 在 Vue 中使用
+
+```vue
+<template>
+  <div v-html="htmlContent"></div>
+</template>
+
+<script>
+import { Json2Docs } from '@json2docs/core';
+
+export default {
+  data() {
+    return {
+      htmlContent: ''
+    };
+  },
+  async mounted() {
+    const json2docs = new Json2Docs();
+    const config = {
+      content: [
+        { text: 'Vue 中的文档', style: 'title' },
+        { text: '通过 v-html 渲染' }
+      ],
+      styles: {
+        title: { fontSize: '20px', fontWeight: 'bold' }
+      },
+      output: { format: 'html' }
+    };
+
+    const result = await json2docs.generate(config);
+    this.htmlContent = result.content;
+  }
+};
+</script>
+```
+
+## 在 React 中使用
+
+```jsx
+import React, { useState, useEffect } from 'react';
+import { Json2Docs } from '@json2docs/core';
+
+function DocumentRenderer() {
+  const [htmlContent, setHtmlContent] = useState('');
+
+  useEffect(() => {
+    const generateDocument = async () => {
+      const json2docs = new Json2Docs();
+      const config = {
+        content: [
+          { text: 'React 中的文档', style: 'title' },
+          { text: '通过 dangerouslySetInnerHTML 渲染' }
+        ],
+        styles: {
+          title: { fontSize: '20px', fontWeight: 'bold' }
+        },
+        output: { format: 'html' }
+      };
+
+      const result = await json2docs.generate(config);
+      setHtmlContent(result.content);
+    };
+
+    generateDocument();
+  }, []);
+
+  return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
+}
+```
+
+## 配置格式说明
+
+### 文档内容配置
+
+完全兼容 pdfmake 的配置格式，支持：
+
+- **文本元素**：`{ text: '内容' }`
+- **表格**：`{ table: { body: [...] } }`
+- **图片**：`{ image: 'url' }`
+- **列表**：`{ ul: ['项目1', '项目2'] }`
+- **样式**：`{ style: 'styleName' }`
+
+### 样式定义
+
+```javascript
+styles: {
+  title: {
+    fontSize: 18,
+    bold: true,
+    color: '#2c3e50',
+    margin: [0, 0, 0, 10]
+  },
+  subtitle: {
+    fontSize: 14,
+    bold: true,
+    color: '#7f8c8d'
+  }
+}
+```
+
+### 输出配置
+
+```javascript
+output: {
+  format: 'html', // 'pdf' | 'docx' | 'html'
+  options: {
+    filename: 'output.pdf', // PDF/DOCX 文件名
+    // 其他格式特定选项
+  }
+}
+```
 
 ## 项目结构
 
 ```shell
 json2docs/
+├── packages/
+│   ├── core/              # 核心转换引擎
+│   ├── react/             # React 组件包
+│   └── vue/               # Vue 组件包
 ├── src/
-│   ├── core/           # 核心转换引擎
-│   ├── generators/     # 各种格式生成器
-│   ├── templates/      # 模板文件
-│   └── utils/          # 工具函数
-├── examples/           # 示例数据
-├── tests/              # 测试文件
-├── docs/               # 文档
-└── dist/               # 构建输出
+│   ├── core/              # 核心生成器
+│   ├── generators/        # 格式生成器
+│   ├── browser/           # 浏览器兼容版本
+│   └── components/        # 前端组件
+├── examples/              # 使用示例
+└── docs/                  # 文档
 ```
 
-## 使用方法
+## 技术栈
 
-待开发完成后补充...
+- **JavaScript** - 核心语言
+- **pdfmake** - PDF 生成
+- **docx** - DOCX 生成
+- **Vue 3** - Vue 组件支持
+- **React 18** - React 组件支持
+
+## 开发计划
+
+### 已完成 ✅
+
+- [x] 项目基础架构
+- [x] 核心转换引擎设计
+- [x] HTML DOM 生成器
+- [x] 基础类型定义
+
+### 进行中 🔄
+
+- [ ] PDF 生成器（pdfmake 集成）
+- [ ] DOCX 生成器（docx 库集成）
+- [ ] 样式转换引擎
+
+### 计划中 📋
+
+- [ ] Vue 组件包
+- [ ] React 组件包
+- [ ] CLI 工具
+- [ ] 完整文档和示例
 
 ## 贡献指南
 
-待开发完成后补充...
+欢迎提交 Issue 和 Pull Request！
 
 ## 许可证
 
 MIT License
-
-## 主要目标
-
-- [ ] 核心 npm 库：结构化 JSON 转换为 PDF、DOCX、HTML
-- [ ] Vue 组件：封装核心库，支持 JSON 渲染
-- [ ] React 组件：封装核心库，支持 JSON 渲染
-
-## 详细计划
-
-### 1. 核心库
-
-- [x] 设计 JSON Schema
-- [x] 实现 toHtml(json)
-- [x] 实现 toPdf(json)
-- [ ] 实现 toDocx(json)
-- [ ] 单元测试
-
-### 2. Vue 组件
-
-- [ ] Vue3 SFC，props: json
-- [ ] 响应式渲染
-- [ ] 支持主题/样式扩展
-
-### 3. React 组件
-
-- [ ] React18 FC，props: json
-- [ ] 响应式渲染
-- [ ] 支持主题/样式扩展
-
-### 4. 文档与示例
-
-- [ ] 用法文档
-- [ ] 组件用例

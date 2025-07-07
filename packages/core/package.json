@@ -1,18 +1,28 @@
 {
   "name": "@json2docs/core",
   "version": "0.1.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "description": "JSON2Docs 核心转换引擎",
+  "main": "src/index.js",
+  "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./src/index.js",
+      "require": "./src/index.js"
     }
   },
-  "files": ["dist"],
+  "files": ["src"],
   "scripts": {
-    "build": "tsc -b"
+    "build": "echo 'Core package is ready to use'",
+    "test": "echo 'Tests not implemented yet'"
   },
+  "keywords": [
+    "json2docs",
+    "pdfmake",
+    "document-generation",
+    "html",
+    "pdf",
+    "docx"
+  ],
+  "author": "JSON2Docs Team",
   "license": "MIT"
 }

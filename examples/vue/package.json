@@ -1,0 +1,16 @@
+{
+  "name": "@json2docs-examples/vue",
+  "version": "1.0.0",
+  "description": "JSON2Docs Vue 组件示例",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@json2docs/core": "workspace:*",
+    "@json2docs/vue": "workspace:*",
+    "vue": "^3.3.0"
+  }
+}

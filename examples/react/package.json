@@ -1,0 +1,20 @@
+{
+  "name": "@json2docs-examples/react",
+  "version": "1.0.0",
+  "description": "JSON2Docs React 组件示例",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@json2docs/core": "workspace:*",
+    "@json2docs/react": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0"
+  }
+}
