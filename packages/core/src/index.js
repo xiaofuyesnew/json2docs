@@ -390,8 +390,8 @@ export class Json2Docs {
             // 优先使用全局的 pdfmake（CDN 版本）
       if (typeof window !== 'undefined' && window.pdfMake) {
         pdfMake = window.pdfMake;
-        if (pdfMake.vfs) {
-          vfs = pdfMake.vfs;
+        if (window.vfs) {
+          vfs = window.vfs;
         }
       }
 
@@ -518,41 +518,32 @@ export class Json2Docs {
         }]
       });
 
-      // 生成 buffer
-      const buffer = await Packer.toBuffer(doc);
-
-      if (options.filename) {
-        // 保存到文件
-        const outputPath = options.filename;
-
-        if (typeof window !== 'undefined') {
-          // 浏览器环境
-          const blob = new Blob([buffer], {
-            type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-          });
-          const url = URL.createObjectURL(blob);
+      let docxData;
+      if (typeof window !== 'undefined' && window.Blob) {
+        // 浏览器环境
+        docxData = await Packer.toBlob(doc);
+        if (options.filename) {
+          const url = URL.createObjectURL(docxData);
           const link = document.createElement('a');
           link.href = url;
           link.download = options.filename;
           link.click();
           URL.revokeObjectURL(url);
-          return {
-            content: buffer,
-            outputPath: options.filename
-          };
-        } else {
-          // Node.js 环境
-          const fs = await import('fs');
-          fs.default.writeFileSync(outputPath, buffer);
-          return {
-            content: buffer,
-            outputPath
-          };
         }
-      } else {
         return {
-          content: buffer,
-          outputPath: null
+          content: docxData,
+          outputPath: options.filename || null
+        };
+      } else {
+        // Node.js 环境
+        docxData = await Packer.toBuffer(doc);
+        if (options.filename) {
+          const fs = await import('fs');
+          fs.default.writeFileSync(options.filename, docxData);
+        }
+        return {
+          content: docxData,
+          outputPath: options.filename || null
         };
       }
     } catch (error) {
@@ -825,16 +816,15 @@ export class Json2Docs {
    * @returns {Array} DOCX 子元素数组
    */
   async convertPdfMakeToDocx(content, styles = {}) {
-    const { Paragraph, TextRun, Table, TableRow, TableCell, HeadingLevel, AlignmentType } = await import('docx');
     const children = [];
-
-    content.forEach(item => {
-      const docxElement = this.convertItemToDocx(item, styles);
-      if (docxElement) {
+    for (const item of content) {
+      const docxElement = await this.convertItemToDocx(item, styles);
+      if (Array.isArray(docxElement)) {
+        children.push(...docxElement.filter(Boolean));
+      } else if (docxElement) {
         children.push(docxElement);
       }
-    });
-
+    }
     return children;
   }
 
@@ -845,46 +835,79 @@ export class Json2Docs {
    * @returns {Object} DOCX 元素
    */
   async convertItemToDocx(item, styles) {
-    const { Paragraph, TextRun, Table, TableRow, TableCell, HeadingLevel, AlignmentType } = await import('docx');
+    const { Paragraph, TextRun, Table, TableRow, TableCell, HeadingLevel, AlignmentType, ImageRun } = await import('docx');
 
+    // 文本段落
     if (item.text) {
+      const style = (item.style && styles[item.style]) || {};
       const textRun = new TextRun({
         text: item.text,
-        bold: item.bold || (item.style && styles[item.style]?.bold),
-        italic: item.italic || (item.style && styles[item.style]?.italic),
-        size: item.fontSize || (item.style && styles[item.style]?.fontSize) || 24,
-        color: item.color || (item.style && styles[item.style]?.color)
+        bold: item.bold ?? style.bold,
+        italics: item.italics ?? style.italics,
+        size: ((item.fontSize ?? style.fontSize ?? 12) * 2),
+        color: item.color ?? style.color,
+        font: item.font ?? style.font
       });
-
       return new Paragraph({
         children: [textRun],
-        alignment: await this.convertAlignment(item.alignment || (item.style && styles[item.style]?.alignment))
+        alignment: await this.convertAlignment(item.alignment ?? style.alignment)
       });
     }
 
+    // 图片（仅支持 base64 或 dataURL）
+    if (item.image) {
+      // 只支持 base64 或 dataURL
+      let data = item.image;
+      if (typeof data === 'string' && data.startsWith('data:image/')) {
+        // dataURL
+        return new Paragraph({
+          children: [new ImageRun({ data: data.split(',')[1], transformation: { width: item.width || 100, height: item.height || 100 } })]
+        });
+      } else if (typeof data === 'string' && /^[A-Za-z0-9+/=]+$/.test(data)) {
+        // base64
+        return new Paragraph({
+          children: [new ImageRun({ data, transformation: { width: item.width || 100, height: item.height || 100 } })]
+        });
+      }
+      // 其他格式暂不支持
+    }
+
+    // 表格
     if (item.table) {
-      return this.convertTableToDocx(item.table);
+      return await this.convertTableToDocx(item.table);
     }
 
+    // 列表
     if (item.ul || item.ol) {
-      return this.convertListToDocx(item.ul || item.ol, item.ul ? 'ul' : 'ol');
+      return await this.convertListToDocx(item.ul || item.ol, item.ul ? 'ul' : 'ol');
     }
 
+    // 堆叠 stack
     if (item.stack) {
-      const stackChildren = item.stack.map(subItem =>
-        this.convertItemToDocx(subItem, styles)
-      ).filter(Boolean);
-
-      return stackChildren.length > 0 ? stackChildren : null;
+      const stackChildren = [];
+      for (const subItem of item.stack) {
+        const subDocx = await this.convertItemToDocx(subItem, styles);
+        if (Array.isArray(subDocx)) {
+          stackChildren.push(...subDocx.filter(Boolean));
+        } else if (subDocx) {
+          stackChildren.push(subDocx);
+        }
+      }
+      return stackChildren;
     }
 
+    // 列布局 columns
     if (item.columns) {
-      // DOCX 不支持列布局，转换为段落
-      const columnChildren = item.columns.map(column =>
-        this.convertItemToDocx(column, styles)
-      ).filter(Boolean);
-
-      return columnChildren.length > 0 ? columnChildren : null;
+      const columnChildren = [];
+      for (const col of item.columns) {
+        const colDocx = await this.convertItemToDocx(col, styles);
+        if (Array.isArray(colDocx)) {
+          columnChildren.push(...colDocx.filter(Boolean));
+        } else if (colDocx) {
+          columnChildren.push(colDocx);
+        }
+      }
+      return columnChildren;
     }
 
     return null;

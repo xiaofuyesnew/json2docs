@@ -252,21 +252,29 @@ output: {
 ```shell
 json2docs/
 ├── packages/
-│   ├── core/              # 核心转换引擎
-│   ├── react/             # React 组件包
-│   └── vue/               # Vue 组件包
-├── src/
-│   ├── core/              # 核心生成器
-│   ├── generators/        # 格式生成器
-│   ├── browser/           # 浏览器兼容版本
-│   └── components/        # 前端组件
+│   ├── core/              # 核心转换引擎 (@json2docs/core)
+│   │   ├── src/           # 源代码
+│   │   ├── dist/          # 构建输出
+│   │   ├── vite.config.js # Vite 配置
+│   │   └── package.json   # 包配置
+│   ├── react/             # React 组件包 (@json2docs/react)
+│   │   ├── src/           # 源代码
+│   │   ├── dist/          # 构建输出
+│   │   ├── vite.config.js # Vite 配置
+│   │   └── package.json   # 包配置
+│   └── vue/               # Vue 组件包 (@json2docs/vue)
+│       ├── src/           # 源代码
+│       ├── dist/          # 构建输出
+│       ├── vite.config.js # Vite 配置
+│       └── package.json   # 包配置
 ├── examples/              # 使用示例
-└── docs/                  # 文档
+└── pnpm-workspace.yaml    # pnpm 工作区配置
 ```
 
 ## 技术栈
 
 - **JavaScript** - 核心语言
+- **Vite** - 构建工具
 - **pdfmake** - PDF 生成
 - **docx** - DOCX 生成
 - **Vue 3** - Vue 组件支持
@@ -280,6 +288,8 @@ json2docs/
 - [x] 核心转换引擎设计
 - [x] HTML DOM 生成器
 - [x] 基础类型定义
+- [x] Vite 构建配置
+- [x] 包结构优化
 
 ### 进行中 🔄
 
@@ -293,6 +303,38 @@ json2docs/
 - [ ] React 组件包
 - [ ] CLI 工具
 - [ ] 完整文档和示例
+
+## 开发指南
+
+### 安装依赖
+
+```bash
+pnpm install
+```
+
+### 开发模式
+
+```bash
+# 开发所有包
+pnpm dev
+
+# 开发特定包
+pnpm dev:core
+pnpm dev:vue
+pnpm dev:react
+```
+
+### 构建
+
+```bash
+# 构建所有包
+pnpm build
+
+# 构建特定包
+pnpm build:core
+pnpm build:vue
+pnpm build:react
+```
 
 ## 贡献指南
 
