@@ -2,18 +2,37 @@
   "name": "@json2docs/core",
   "version": "0.1.0",
   "description": "JSON2Docs 核心转换引擎",
-  "main": "src/index.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "unpkg": "dist/index.umd.js",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./src/index.js",
-      "require": "./src/index.js"
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
     }
   },
-  "files": ["src"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "echo 'Core package is ready to use'",
-    "test": "echo 'Tests not implemented yet'"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node test.js",
+    "test:advanced": "node test-advanced.js",
+    "test:performance": "node performance-test.js",
+    "test:all": "node test.js && node test-advanced.js && node performance-test.js"
+  },
+  "devDependencies": {
+    "terser": "^5.0.0",
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "docx": "^8.5.0",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
+    "pdfmake": "^0.2.7"
   },
   "keywords": [
     "json2docs",
