@@ -539,7 +539,7 @@ export class Json2Docs {
         docxData = await Packer.toBuffer(doc);
         if (options.filename) {
           const fs = await import('fs');
-          fs.default.writeFileSync(options.filename, docxData);
+          fs.writeFileSync(options.filename, docxData);
         }
         return {
           content: docxData,
@@ -840,36 +840,56 @@ export class Json2Docs {
     // 文本段落
     if (item.text) {
       const style = (item.style && styles[item.style]) || {};
+      // 处理字体大小 - docx使用半磅为单位
+      const fontSize = item.fontSize ?? style.fontSize ?? 12;
+      const sizeInHalfPoints = Math.round(fontSize * 2);
+      // 处理颜色 - 移除#号并转换为大写
+      let color = item.color ?? style.color;
+      if (color && color.startsWith('#')) {
+        color = color.substring(1).toUpperCase();
+      }
       const textRun = new TextRun({
         text: item.text,
         bold: item.bold ?? style.bold,
         italics: item.italics ?? style.italics,
-        size: ((item.fontSize ?? style.fontSize ?? 12) * 2),
-        color: item.color ?? style.color,
-        font: item.font ?? style.font
+        size: sizeInHalfPoints,
+        color: color,
+        font: item.font ?? style.font ?? 'Calibri'
       });
       return new Paragraph({
         children: [textRun],
-        alignment: await this.convertAlignment(item.alignment ?? style.alignment)
+        alignment: await this.convertAlignment(item.alignment ?? style.alignment),
+        spacing: {
+          before: item.margin?.[0] ? item.margin[0] * 20 : undefined,
+          after: item.margin?.[2] ? item.margin[2] * 20 : undefined
+        }
       });
     }
 
     // 图片（仅支持 base64 或 dataURL）
     if (item.image) {
-      // 只支持 base64 或 dataURL
       let data = item.image;
       if (typeof data === 'string' && data.startsWith('data:image/')) {
-        // dataURL
         return new Paragraph({
-          children: [new ImageRun({ data: data.split(',')[1], transformation: { width: item.width || 100, height: item.height || 100 } })]
+          children: [new ImageRun({
+            data: data.split(',')[1],
+            transformation: {
+              width: item.width || 200,
+              height: item.height || 200
+            }
+          })]
         });
       } else if (typeof data === 'string' && /^[A-Za-z0-9+/=]+$/.test(data)) {
-        // base64
         return new Paragraph({
-          children: [new ImageRun({ data, transformation: { width: item.width || 100, height: item.height || 100 } })]
+          children: [new ImageRun({
+            data,
+            transformation: {
+              width: item.width || 200,
+              height: item.height || 200
+            }
+          })]
         });
       }
-      // 其他格式暂不支持
     }
 
     // 表格
@@ -896,18 +916,31 @@ export class Json2Docs {
       return stackChildren;
     }
 
-    // 列布局 columns
+    // 列布局 columns（用表格模拟分栏）
     if (item.columns) {
-      const columnChildren = [];
+      // 每个column转为单元格内容
+      const columnCells = [];
       for (const col of item.columns) {
         const colDocx = await this.convertItemToDocx(col, styles);
+        // 允许每列有多个段落
+        let children = [];
         if (Array.isArray(colDocx)) {
-          columnChildren.push(...colDocx.filter(Boolean));
+          children = colDocx.filter(Boolean);
         } else if (colDocx) {
-          columnChildren.push(colDocx);
+          children = [colDocx];
         }
+        columnCells.push(new TableCell({
+          children,
+          verticalAlign: 'center',
+          margins: { top: 100, bottom: 100, left: 100, right: 100 }
+        }));
       }
-      return columnChildren;
+      const { Table, TableRow } = await import('docx');
+      return new Table({
+        rows: [new TableRow({ children: columnCells })],
+        width: { size: 100, type: 'pct' },
+        borders: { top: { size: 0, color: 'FFFFFF' }, bottom: { size: 0, color: 'FFFFFF' }, left: { size: 0, color: 'FFFFFF' }, right: { size: 0, color: 'FFFFFF' }, insideHorizontal: { size: 0, color: 'FFFFFF' }, insideVertical: { size: 0, color: 'FFFFFF' } }
+      });
     }
 
     return null;
@@ -919,28 +952,49 @@ export class Json2Docs {
    * @returns {Object} DOCX 表格
    */
   async convertTableToDocx(table) {
-    const { Table, TableRow, TableCell, Paragraph, TextRun } = await import('docx');
+    const { Table, TableRow, TableCell, Paragraph, TextRun, AlignmentType } = await import('docx');
 
     if (!table.body || !Array.isArray(table.body)) {
       return null;
     }
 
-    const rows = table.body.map(row => {
-      const cells = row.map(cell => {
-        const cellContent = typeof cell === 'string' ? cell : cell.text || '';
+    const rows = table.body.map((row, rowIndex) => {
+      const cells = row.map((cell, cellIndex) => {
+        let cellContent = '';
+        let isHeader = rowIndex === 0 && table.headerRows > 0;
+
+        if (typeof cell === 'string') {
+          cellContent = cell;
+        } else if (typeof cell === 'object' && cell !== null) {
+          cellContent = cell.text || cell.content || '';
+          isHeader = isHeader || cell.header;
+        }
+
         return new TableCell({
           children: [
             new Paragraph({
-              children: [new TextRun({ text: cellContent })]
+              children: [new TextRun({
+                text: cellContent,
+                bold: isHeader
+              })]
             })
-          ]
+          ],
+          shading: isHeader ? {
+            fill: 'F2F2F2'
+          } : undefined
         });
       });
 
       return new TableRow({ children: cells });
     });
 
-    return new Table({ rows });
+    return new Table({
+      rows,
+      width: {
+        size: 100,
+        type: 'pct'
+      }
+    });
   }
 
   /**
@@ -950,21 +1004,42 @@ export class Json2Docs {
    * @returns {Array} DOCX 段落数组
    */
   async convertListToDocx(list, type) {
-    const { Paragraph, TextRun } = await import('docx');
+    const { Paragraph, TextRun, AlignmentType } = await import('docx');
 
     if (!Array.isArray(list)) {
       return [];
     }
 
     return list.map((item, index) => {
-      const content = typeof item === 'string' ? item : item.text || '';
+      let content = '';
+      let fontSize = 12;
+
+      if (typeof item === 'string') {
+        content = item;
+      } else if (typeof item === 'object' && item !== null) {
+        content = item.text || item.content || '';
+        fontSize = item.fontSize || 12;
+      }
+
       const bulletText = type === 'ul' ? '• ' : `${index + 1}. `;
+      const sizeInHalfPoints = Math.round(fontSize * 2);
 
       return new Paragraph({
         children: [
-          new TextRun({ text: bulletText, bold: true }),
-          new TextRun({ text: content })
-        ]
+          new TextRun({
+            text: bulletText,
+            bold: true,
+            size: sizeInHalfPoints
+          }),
+          new TextRun({
+            text: content,
+            size: sizeInHalfPoints
+          })
+        ],
+        spacing: {
+          before: 120,
+          after: 120
+        }
       });
     });
   }
