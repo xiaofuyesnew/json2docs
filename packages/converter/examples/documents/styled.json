@@ -1,0 +1,120 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "样式文档示例",
+    "author": "JSON2Docs Team",
+    "created": "2025-07-24",
+    "description": "这是一个带有自定义样式的文档示例"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "样式文档示例",
+      "id": "styled-document"
+    },
+    {
+      "type": "paragraph",
+      "text": "这是一个带有自定义样式的文档示例。JSON2Docs支持自定义字体、颜色、尺寸和间距。",
+      "alignment": "left"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "样式列表",
+      "id": "style-list"
+    },
+    {
+      "type": "list",
+      "listType": "unordered",
+      "items": [
+        { "text": "自定义字体", "level": 0 },
+        { "text": "自定义颜色", "level": 0 },
+        { "text": "自定义尺寸", "level": 0 },
+        { "text": "自定义间距", "level": 0 }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这是一个带有背景色的段落。",
+      "style": {
+        "backgroundColor": "#EBF5FF",
+        "padding": "16px",
+        "borderRadius": "4px",
+        "color": "#1E40AF",
+        "fontWeight": "medium"
+      }
+    },
+    {
+      "type": "paragraph",
+      "text": "这是一个居中对齐的段落。",
+      "alignment": "center"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "表格样式",
+      "id": "table-style"
+    },
+    {
+      "type": "table",
+      "headers": ["样式类型", "描述", "示例"],
+      "rows": [
+        ["字体", "设置文档中使用的字体", "Arial, Roboto, 等"],
+        ["颜色", "设置文本和背景颜色", "#333333, rgb(255, 0, 0), 等"],
+        ["尺寸", "设置文本和元素的大小", "16px, 2em, 等"],
+        ["间距", "设置行高和元素间距", "1.5, 1em, 等"]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "图片样式",
+      "id": "image-style"
+    },
+    {
+      "type": "image",
+      "src": "https://via.placeholder.com/400x200",
+      "alt": "样式图片示例",
+      "width": 400,
+      "height": 200
+    },
+    {
+      "type": "paragraph",
+      "text": "这是文档的结尾。感谢使用JSON2Docs！",
+      "alignment": "center",
+      "style": {
+        "marginTop": "2em",
+        "fontStyle": "italic",
+        "color": "#666666"
+      }
+    }
+  ],
+  "styles": {
+    "fonts": {
+      "default": "Roboto, sans-serif",
+      "heading": "Georgia, serif",
+      "monospace": "Fira Code, monospace"
+    },
+    "colors": {
+      "text": "#374151",
+      "background": "#FFFFFF",
+      "heading": "#1E40AF",
+      "link": "#3B82F6"
+    },
+    "sizes": {
+      "baseFontSize": "16px",
+      "h1": "2.25em",
+      "h2": "1.75em",
+      "h3": "1.5em",
+      "h4": "1.25em",
+      "h5": "1.125em",
+      "h6": "1em"
+    },
+    "spacing": {
+      "lineHeight": 1.6,
+      "paragraphSpacing": "1.5em",
+      "listItemSpacing": "0.75em"
+    }
+  }
+}

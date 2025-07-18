@@ -1,0 +1,170 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "复杂文档示例",
+    "author": "JSON2Docs Team",
+    "created": "2025-07-24",
+    "description": "这是一个包含多种元素的复杂文档示例"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "复杂文档示例",
+      "id": "complex-document"
+    },
+    {
+      "type": "paragraph",
+      "text": "这是一个包含多种元素的复杂文档示例。JSON2Docs支持多种文档元素，包括标题、段落、列表、表格和图片。",
+      "alignment": "left"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "标题示例",
+      "id": "heading-example"
+    },
+    {
+      "type": "paragraph",
+      "text": "JSON2Docs支持6级标题，从h1到h6。"
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "text": "这是三级标题",
+      "id": "h3-example"
+    },
+    {
+      "type": "heading",
+      "level": 4,
+      "text": "这是四级标题",
+      "id": "h4-example"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "段落示例",
+      "id": "paragraph-example"
+    },
+    {
+      "type": "paragraph",
+      "text": "这是一个左对齐的段落。",
+      "alignment": "left"
+    },
+    {
+      "type": "paragraph",
+      "text": "这是一个居中对齐的段落。",
+      "alignment": "center"
+    },
+    {
+      "type": "paragraph",
+      "text": "这是一个右对齐的段落。",
+      "alignment": "right"
+    },
+    {
+      "type": "paragraph",
+      "text": "这是一个两端对齐的段落。这是一个两端对齐的段落。这是一个两端对齐的段落。这是一个两端对齐的段落。这是一个两端对齐的段落。这是一个两端对齐的段落。",
+      "alignment": "justify"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "列表示例",
+      "id": "list-example"
+    },
+    {
+      "type": "paragraph",
+      "text": "无序列表示例："
+    },
+    {
+      "type": "list",
+      "listType": "unordered",
+      "items": [
+        { "text": "项目1", "level": 0 },
+        { "text": "项目2", "level": 1 },
+        { "text": "项目2.1", "level": 2 },
+        { "text": "项目3", "level": 0 }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "有序列表示例："
+    },
+    {
+      "type": "list",
+      "listType": "ordered",
+      "items": [
+        { "text": "第一步", "level": 0 },
+        { "text": "第二步", "level": 0 },
+        { "text": "第二步的子步骤", "level": 1 },
+        { "text": "第三步", "level": 0 }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "表格示例",
+      "id": "table-example"
+    },
+    {
+      "type": "table",
+      "headers": ["名称", "类型", "描述"],
+      "rows": [
+        ["标题", "heading", "文档标题，支持6个级别"],
+        ["段落", "paragraph", "文本段落，支持不同的对齐方式"],
+        ["列表", "list", "有序或无序列表，支持嵌套"],
+        ["表格", "table", "数据表格，包含表头和行"],
+        ["图片", "image", "图片，支持URL或base64"]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "图片示例",
+      "id": "image-example"
+    },
+    {
+      "type": "paragraph",
+      "text": "下面是一个图片示例："
+    },
+    {
+      "type": "image",
+      "src": "https://via.placeholder.com/600x300",
+      "alt": "示例图片",
+      "width": 600,
+      "height": 300
+    },
+    {
+      "type": "paragraph",
+      "text": "这是文档的结尾。感谢使用JSON2Docs！",
+      "alignment": "center"
+    }
+  ],
+  "styles": {
+    "fonts": {
+      "default": "Arial, sans-serif",
+      "heading": "Georgia, serif",
+      "monospace": "Courier New, monospace"
+    },
+    "colors": {
+      "text": "#333333",
+      "background": "#ffffff",
+      "heading": "#000000",
+      "link": "#0066cc"
+    },
+    "sizes": {
+      "baseFontSize": "16px",
+      "h1": "2em",
+      "h2": "1.5em",
+      "h3": "1.17em",
+      "h4": "1em",
+      "h5": "0.83em",
+      "h6": "0.67em"
+    },
+    "spacing": {
+      "lineHeight": 1.5,
+      "paragraphSpacing": "1em",
+      "listItemSpacing": "0.5em"
+    }
+  }
+}

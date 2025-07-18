@@ -1,0 +1,34 @@
+{
+  "name": "@json2docs/converter",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "JSON文档转换器核心库",
+  "keywords": [
+    "json",
+    "document",
+    "converter",
+    "html",
+    "pdf",
+    "docx"
+  ],
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "build": "vite build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "example": "node examples/usage-example.js",
+    "validate": "node examples/validate-example.js"
+  },
+  "dependencies": {
+    "docx": "^8.5.0",
+    "pdf-lib": "^1.17.1"
+  },
+  "devDependencies": {
+    "vitest": "^1.2.2"
+  }
+}

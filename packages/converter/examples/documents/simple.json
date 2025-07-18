@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "简单文档示例",
+    "author": "JSON2Docs",
+    "created": "2025-07-24",
+    "description": "这是一个简单的文档示例"
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "文档标题",
+      "id": "document-title"
+    },
+    {
+      "type": "paragraph",
+      "text": "这是一个简单的段落示例。JSON2Docs可以将JSON结构化文档数据转换为HTML、PDF和DOCX格式。",
+      "alignment": "left"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "功能列表",
+      "id": "features"
+    },
+    {
+      "type": "list",
+      "listType": "unordered",
+      "items": [
+        { "text": "HTML转换", "level": 0 },
+        { "text": "PDF转换", "level": 0 },
+        { "text": "DOCX转换", "level": 0 }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "text": "这是文档的结尾。感谢使用JSON2Docs！",
+      "alignment": "center"
+    }
+  ]
+}
